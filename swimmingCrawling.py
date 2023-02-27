@@ -16,7 +16,6 @@ driver = webdriver.Chrome(ChromeDriverManager().install())
 url = "http://stadium.seogwiposports.org/sub03/sub02.php"
 driver.get(url)
 
-
 # 창 최대화
 driver.maximize_window()
 
