@@ -30,7 +30,7 @@ all_data_df = []
 all_data_err = []
 
 for page in tqdm(range(1, end_page_num + 1)):
-# for page in tqdm(range(1, 3)):
+# for page in tqdm(range(1, 10)):
     url = f'https://www.investing.com/stock-screener/?sp=country::{nationCode}|sector::a|industry::a|equityType::ORD%3Ceq_market_cap;{page}'
     driver.get(url)
 
@@ -65,15 +65,18 @@ all_data_df_bind = pd.concat(all_data_df, axis=0)
 
 data_country = html.find(class_='js-search-input inputDropDown')['value']
 all_data_df_bind['country'] = data_country
-all_data_df_bind['date'] = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+all_data_df_bind['date'] = datetime.datetime.today().strftime('%Y-%m-%d')
+# all_data_df_bind['date'] = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 all_data_df_bind = all_data_df_bind[~all_data_df_bind['Name'].isnull()]
 all_data_df_bind = all_data_df_bind[all_data_df_bind['Exchange'].isin(['NASDAQ', 'NYSE', 'NYSE Amex'])]
 all_data_df_bind = all_data_df_bind.drop_duplicates((['Symbol']))
 all_data_df_bind.reset_index(inplace=True, drop=True)
 all_data_df_bind = all_data_df_bind.replace({np.nan: None})
 all_data_df_bind.rename(columns={'Market Cap': 'MarketCap'}, inplace=True)
-print(all_data_df_bind.columns)
-print(all_data_df_bind.head(100))
+
+print('-' * 100)
+print(all_data_df_bind.head())
+print(all_data_df_bind.info())
 
 con = pymysql.connect(user='root',
                       password='chey0720',
@@ -92,10 +95,5 @@ args = all_data_df_bind.values.tolist()
 
 mycursor.executemany(query, args)
 con.commit()
-
-print('-' * 100)
-print(all_data_df_bind.head(100))
-# print(df_table[0])
-
 
 driver.quit()
