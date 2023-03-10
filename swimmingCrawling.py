@@ -57,7 +57,7 @@ try:
         resultAlert = driver.switch_to.alert
         print(resultAlert.text)
         resultAlert.accept()
-        time.sleep(1)
+        time.sleep(0.5)
         driver.find_element(By.CLASS_NAME, value="btn_submit").click()
         cnt += 1
         print(cnt)
